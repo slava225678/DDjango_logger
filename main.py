@@ -5,6 +5,26 @@ from typing import DefaultDict, List
 from constants import FIVE, LEVELS, NULL, ONE, RESULT, TOTAL_REQ, TWO
 
 
+def _format_and_print(
+        header: str,
+        items: list,
+        width: int = 25,
+        alignment: str = '<'
+) -> None:
+    """Универсальная функция для форматирования и печати строк отчета
+
+    Args:
+        header (str): Заголовок (левая часть строки)
+        items (list): Элементы для форматирования (правая часть)
+        width (int): Ширина левой колонки
+        alignment (str): Выравнивание ('<', '^', '>')
+    """
+    formatted_items = [f"{item:^10}" for item in items]
+    joined_items = " ".join(formatted_items)
+    output = f"{header:{alignment}{width}} {joined_items}"
+    print(output)
+
+
 def print_report(
         data: DefaultDict[str, DefaultDict[str, int]],
         report_type: str = 'handlers'
@@ -17,19 +37,13 @@ def print_report(
     '''
     if report_type == 'handlers':
         print('\nОтчёт по обработчикам (handlers):')
-        formatted_levels = [f'{level:^10}' for level in LEVELS]
-        joined_levels = ' '.join(formatted_levels)
-        final_output_lvl = '{:^25} {}'.format('HANDLER', joined_levels)
-        print(final_output_lvl)
+        _format_and_print('HANDLER', LEVELS)
 
         for handler in sorted(data.keys()):
             if handler == RESULT:
                 continue
             counts = [data[handler].get(level, NULL) for level in LEVELS]
-            formatted_handler = [f'{count:^10}' for count in counts]
-            joined_handlers = ' '.join(formatted_handler)
-            final_output_hand = '{:<25} {}'.format(handler, joined_handlers)
-            print(final_output_hand)
+            _format_and_print(handler, counts)
 
         if RESULT in data:
             counts = [data[RESULT].get(level, NULL) for level in LEVELS]
